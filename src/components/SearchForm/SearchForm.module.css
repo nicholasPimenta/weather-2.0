@@ -60,3 +60,11 @@
   color: var(--color-text-primary);
   transition-duration: var(--duration-fast);
 }
+
+@media (max-width: 30rem) {
+  .formContent {
+    gap: var(--space-1-5);
+    padding-block: var(--space-3);
+    padding-inline: var(--space-2);
+  }
+}

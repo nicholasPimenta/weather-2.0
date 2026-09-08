@@ -1,7 +1,45 @@
 import styles from "./App.module.css";
 import SearchForm from "./components/SearchForm/SearchForm";
+import rainIcon from "@meteocons/svg-static/monochrome/rain.svg"
+import WeatherResult from "./components/WeatherResult/WeatherResult";
 
 function App() {
+
+  const forecastDays = [
+  {
+    id: "2026-09-08",
+    nextDay: "TER",
+    icon: rainIcon,
+    condition: "Chuva",
+    max: 26,
+    min: 21,
+  },
+  {
+    id: "2026-09-09",
+    nextDay: "QUA",
+    icon: rainIcon,
+    condition: "Chuva",
+    max: 25,
+    min: 21,
+  },
+  {
+    id: "2026-09-10",
+    nextDay: "QUI",
+    icon: rainIcon,
+    condition: "Chuva",
+    max: 26,
+    min: 21,
+  },
+  {
+    id: "2026-09-11",
+    nextDay: "SEX",
+    icon: rainIcon,
+    condition: "Chuva",
+    max: 26,
+    min: 21,
+  },
+];
+
   return (
     <main className={styles.weatherApp}>
       <section className={styles.searchView} aria-labelledby="app-title">
@@ -17,6 +55,7 @@ function App() {
           <SearchForm />
         </div>
       </section>
+      <WeatherResult days={forecastDays} />
     </main>
   );
 }

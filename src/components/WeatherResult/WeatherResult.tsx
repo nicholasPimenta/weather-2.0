@@ -1,7 +1,7 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import styles from "./WeatherResult.module.css";
 import clearDayVideo from "../../assets/weather/clear-day.mp4";
-import clearDayFallback from "../../assets/weather/clear-day.png";
+import clearDayFallback from "../../assets/weather/clear-day.webp";
 
 interface ForecastDay {
   id: string;

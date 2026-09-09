@@ -2,6 +2,7 @@ import styles from "./App.module.css";
 import SearchForm from "./components/SearchForm/SearchForm";
 import rainIcon from "@meteocons/svg-static/monochrome/rain.svg"
 import WeatherResult from "./components/WeatherResult/WeatherResult";
+import { geocodeCity } from "./services/openWeather";
 
 function App() {
 
@@ -40,6 +41,15 @@ function App() {
   },
 ];
 
+  const handleSearch = async (city: string): Promise<void> => {
+    try {
+      const results = await geocodeCity(city);
+      console.log(results);
+    } catch (error) {
+      console.error(error);
+    };
+  }
+
   return (
     <main className={styles.weatherApp}>
       <section className={styles.searchView} aria-labelledby="app-title">
@@ -52,7 +62,7 @@ function App() {
               Pesquise uma cidade e entre na atmosfera.
             </p>
           </div>
-          <SearchForm />
+          <SearchForm onSearch={handleSearch} />
         </div>
       </section>
       <WeatherResult days={forecastDays} />

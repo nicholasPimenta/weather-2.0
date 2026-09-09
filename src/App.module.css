@@ -15,7 +15,7 @@
   width: 100%;
   text-align: center;
   padding: var(--page-padding);
-  display: none;
+  display: flex;
 }
 
 .searchViewContent {

@@ -1,5 +1,7 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import styles from "./WeatherResult.module.css";
+import clearDayVideo from "../../assets/weather/clear-day.mp4";
+import clearDayFallback from "../../assets/weather/clear-sky.png";
 
 interface ForecastDay {
   id: string;
@@ -17,6 +19,7 @@ interface WeatherResultProps {
 function WeatherResult({ days }: WeatherResultProps) {
   return (
     <section className={styles.weatherMain}>
+      <div className={styles.gradient} aria-hidden="true"></div>
       <button
         type="button"
         className={styles.backButton}
@@ -24,6 +27,24 @@ function WeatherResult({ days }: WeatherResultProps) {
       >
         <ArrowLeftIcon size={32} aria-hidden="true" weight="light" />
       </button>
+      <img
+        src={clearDayFallback}
+        alt="Clima de Céu Limpo"
+        className={styles.weatherFallback}
+        aria-hidden="true"
+      />
+      <video
+        className={styles.weatherVideo}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster={clearDayFallback}
+        aria-hidden="true"
+      >
+        <source src={clearDayVideo} type="video/mp4" />
+      </video>
       <div className={styles.weatherContent}>
         <div className={styles.weatherNow}>
           <h1 className={styles.title}>Vitória</h1>

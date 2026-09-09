@@ -1,7 +1,6 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import styles from "./WeatherResult.module.css";
-import clearDayVideo from "../../assets/weather/clear-day.mp4";
-import clearDayFallback from "../../assets/weather/clear-day.webp";
+import { weatherMedia, type WeatherScene } from "./WeatherMedia";
 
 interface ForecastDay {
   id: string;
@@ -17,6 +16,10 @@ interface WeatherResultProps {
 }
 
 function WeatherResult({ days }: WeatherResultProps) {
+
+  const scene: WeatherScene = "clear-day";
+  const selectedMedia = weatherMedia[scene];
+
   return (
     <section className={styles.weatherMain}>
       <div className={styles.gradient} aria-hidden="true"></div>
@@ -28,8 +31,8 @@ function WeatherResult({ days }: WeatherResultProps) {
         <ArrowLeftIcon size={32} aria-hidden="true" weight="light" />
       </button>
       <img
-        src={clearDayFallback}
-        alt="Clima de Céu Limpo"
+        src={selectedMedia.fallback}
+        alt=""
         className={styles.weatherFallback}
         aria-hidden="true"
       />
@@ -40,10 +43,11 @@ function WeatherResult({ days }: WeatherResultProps) {
         loop
         playsInline
         preload="auto"
-        poster={clearDayFallback}
+        poster={selectedMedia.fallback}
         aria-hidden="true"
+        key={scene}
       >
-        <source src={clearDayVideo} type="video/mp4" />
+        <source src={selectedMedia.video} type="video/mp4" />
       </video>
       <div className={styles.weatherContent}>
         <div className={styles.weatherNow}>

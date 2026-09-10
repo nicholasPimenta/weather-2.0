@@ -1,15 +1,7 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import styles from "./WeatherResult.module.css";
 import { weatherMedia, type WeatherScene } from "./WeatherMedia";
-
-export interface ForecastDay {
-  id: string;
-  nextDay: string;
-  icon: string;
-  condition: string;
-  max: number;
-  min: number;
-}
+import type { ForecastDay } from "../../utils/forecast";
 
 export interface CurrentWeather {
   temperature: number;

@@ -27,7 +27,7 @@ function SearchForm({ onSearch }: SearchFormProps) {
         <input
           type="search"
           name="city"
-          placeholder="Digite o nome da cidade"
+          placeholder="Ex: Salvador, BR"
           autoComplete="off"
           className={styles.formInput}
           id="city-search" 

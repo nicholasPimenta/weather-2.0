@@ -1,21 +1,21 @@
 import styles from "./App.module.css";
 import SearchForm from "./components/SearchForm/SearchForm";
-import { getWeatherCondition, getWeatherScene, weatherIcons } from "./components/WeatherResult/WeatherMedia";
-import { getLocalDateKey } from "./utils/forecast";
+import { getWeatherScene } from "./components/WeatherResult/WeatherMedia";
+import {
+  prepareForecastDays,
+  type ForecastDay,
+} from "./utils/forecast";
 import { useState } from "react";
 import WeatherResult, {
   type CurrentWeather,
-  type ForecastDay,
 } from "./components/WeatherResult/WeatherResult";
 import {
   geocodeCity,
   getCurrentWeather,
   getForecast,
-  type ForecastItem,
 } from "./services/openWeather";
 
 function App() {
-
   const [currentWeather, setCurrentWeather] = useState<CurrentWeather | null>(
     null,
   );
@@ -23,18 +23,14 @@ function App() {
 
   const handleSearch = async (city: string): Promise<void> => {
     try {
-      const { lat, lon } = await geocodeCity(city);
-      const currentWeatherResponse = await getCurrentWeather(lat, lon);
-      const forecast = await getForecast(lat, lon);
+      const location = await geocodeCity(city);
+      const currentWeatherResponse = await getCurrentWeather(location.lat, location.lon);
+      const forecast = await getForecast(location.lat, location.lon);
       const scene = getWeatherScene(
         currentWeatherResponse.weather[0].id,
         currentWeatherResponse.dt,
         currentWeatherResponse.sys.sunrise,
         currentWeatherResponse.sys.sunset,
-      );
-      const currentDateKey = getLocalDateKey(
-        currentWeatherResponse.dt,
-        forecast.city.timezone,
       );
       const preparedCurrentWeather: CurrentWeather = {
         temperature: Math.round(currentWeatherResponse.main.temp),
@@ -42,43 +38,17 @@ function App() {
         min: Math.round(currentWeatherResponse.main.temp_min),
         humidity: currentWeatherResponse.main.humidity,
         windSpeed: Math.round(currentWeatherResponse.wind.speed * 3.6),
-        description: currentWeatherResponse.weather[0].description.replace(/^./, (letter) => letter.toUpperCase()),
-        city: currentWeatherResponse.name,
+        description: currentWeatherResponse.weather[0].description.replace(
+          /^./,
+          (letter) => letter.toUpperCase(),
+        ),
+        city: location.name,
         scene,
       };
-      const preparedForecastDays = forecast.list
-        .reduce((acc: ForecastDay[], item: ForecastItem) => {
-          const dateKey = getLocalDateKey(item.dt, forecast.city.timezone);
-          const existingDay = acc.find((day) => day.id === dateKey);
-          if (existingDay) {
-            existingDay.max = Math.max(existingDay.max, item.main.temp_max);
-            existingDay.min = Math.min(existingDay.min, item.main.temp_min);
-            return acc;
-          }
-          const nextDay = new Date((item.dt + forecast.city.timezone) * 1000)
-            .toLocaleDateString("pt-BR", { weekday: "short", timeZone: "UTC" })
-            .toUpperCase()
-            .replace(".", "");
-          const weatherCondition = getWeatherCondition(item.weather[0].id);
-          const icon = weatherIcons[weatherCondition];
-          const condition = item.weather[0].description;
-          acc.push({
-            id: dateKey,
-            nextDay,
-            icon,
-            condition,
-            max: item.main.temp_max,
-            min: item.main.temp_min,
-          });
-          return acc;
-        }, [])
-        .filter((day) => day.id !== currentDateKey)
-        .slice(0, 4)
-        .map((day) => ({
-          ...day,
-          max: Math.round(day.max),
-          min: Math.round(day.min),
-        }));
+      const preparedForecastDays = prepareForecastDays(
+        forecast,
+        currentWeatherResponse.dt,
+      );
       setCurrentWeather(preparedCurrentWeather);
       setForecastDays(preparedForecastDays);
       console.log("Panorama meteorológico:", {

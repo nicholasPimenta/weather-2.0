@@ -21,16 +21,18 @@ export interface CurrentWeatherResponse {
   }[];
   main: {
     temp: number;
+    temp_min: number;
+    temp_max: number;
     humidity: number;
   };
   wind: {
     speed: number;
   };
+  name: string;
 }
 
-export interface ForecastResponse {
-  list: {
-    dt: number;
+export interface ForecastItem {
+  dt: number;
     main: {
       temp_min: number;
       temp_max: number;
@@ -40,7 +42,9 @@ export interface ForecastResponse {
       description: string;
       icon: string;
     }[];
-  }[];
+}
+export interface ForecastResponse {
+  list: ForecastItem[];
   city: {
     timezone: number;
   };

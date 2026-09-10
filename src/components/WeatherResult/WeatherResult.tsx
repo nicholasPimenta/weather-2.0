@@ -2,7 +2,7 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import styles from "./WeatherResult.module.css";
 import { weatherMedia, type WeatherScene } from "./WeatherMedia";
 
-interface ForecastDay {
+export interface ForecastDay {
   id: string;
   nextDay: string;
   icon: string;
@@ -11,18 +11,20 @@ interface ForecastDay {
   min: number;
 }
 
+export interface CurrentWeather {
+  temperature: number;
+  max: number;
+  min: number;
+  humidity: number;
+  windSpeed: number;
+  description: string;
+  city: string;
+  scene: WeatherScene;
+}
+
 interface WeatherResultProps {
   days: ForecastDay[];
-  currentWeather: {
-    temperature: number;
-    max: number;
-    min: number;
-    humidity: number;
-    windSpeed: number;
-    description: string;
-    city: string;
-    scene: WeatherScene;
-  };
+  currentWeather: CurrentWeather;
 }
 
 function WeatherResult({ days, currentWeather }: WeatherResultProps) {

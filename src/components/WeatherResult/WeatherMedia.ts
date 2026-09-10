@@ -14,6 +14,10 @@ import snowDayVideo from "../../assets/weather/snow-day.mp4";
 import snowDayImg from "../../assets/weather/snow-day.webp";
 import snowNightVideo from "../../assets/weather/snow-night.mp4";
 import snowNightImg from "../../assets/weather/snow-night.webp";
+import clearIcon from "@meteocons/svg-static/monochrome/clear-day.svg";
+import cloudyIcon from "@meteocons/svg-static/monochrome/cloudy.svg";
+import rainIcon from "@meteocons/svg-static/monochrome/rain.svg";
+import snowIcon from "@meteocons/svg-static/monochrome/snow.svg";
 
 export type WeatherCondition = "clear" | "cloudy" | "rain" | "snow";
 export type DayPeriod = "day" | "night";
@@ -24,6 +28,13 @@ interface WeatherMedia {
   video: string;
   fallback: string;
 }
+
+export const weatherIcons: Record<WeatherCondition, string> = {
+  clear: clearIcon,
+  cloudy: cloudyIcon,
+  rain: rainIcon,
+  snow: snowIcon,
+};
 
 export const weatherMedia: Record<WeatherScene, WeatherMedia> = {
   "clear-day": {video: clearDayVideo,  fallback: clearDayImg},

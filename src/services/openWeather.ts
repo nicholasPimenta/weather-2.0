@@ -23,8 +23,27 @@ export interface CurrentWeatherResponse {
   };
 }
 
+export interface ForecastResponse {
+  list: {
+    dt: number;
+    main: {
+      temp_min: number;
+      temp_max: number;
+    };
+    weather: {
+      id: number;
+      description: string;
+      icon: string;
+    }[];
+  }[];
+  city: {
+    timezone: number;
+  };
+}
+
 const GEOCODING_ENDPOINT = "https://api.openweathermap.org/geo/1.0/direct";
 const CURRENT_WEATHER_ENDPOINT = "https://api.openweathermap.org/data/2.5/weather";
+const FORECAST_ENDPOINT = "https://api.openweathermap.org/data/2.5/forecast";
 
 export async function geocodeCity(city: string): Promise<GeocodingResult> {
   const params = new URLSearchParams({
@@ -69,6 +88,28 @@ export async function getCurrentWeather(lat: number, lon: number): Promise<Curre
   }
 
   const data: CurrentWeatherResponse = await response.json();
+
+  return data;
+}
+
+export async function getForecast(lat: number, lon: number): Promise<ForecastResponse> {
+  const params = new URLSearchParams({
+    lat: lat.toString(),
+    lon: lon.toString(),
+    units: "metric",
+    appid: openWeatherApiKey,
+    lang: "pt_br",
+  });
+
+  const response = await fetch(
+    `${FORECAST_ENDPOINT}?${params}`,
+  );
+
+  if (!response.ok) {
+    throw new Error(`Erro na requisição: ${response.status}`);
+  }
+
+  const data: ForecastResponse = await response.json();
 
   return data;
 }

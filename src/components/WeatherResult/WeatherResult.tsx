@@ -13,11 +13,21 @@ interface ForecastDay {
 
 interface WeatherResultProps {
   days: ForecastDay[];
+  currentWeather: {
+    temperature: number;
+    max: number;
+    min: number;
+    humidity: number;
+    windSpeed: number;
+    description: string;
+    city: string;
+    scene: WeatherScene;
+  };
 }
 
-function WeatherResult({ days }: WeatherResultProps) {
+function WeatherResult({ days, currentWeather }: WeatherResultProps) {
 
-  const scene: WeatherScene = "clear-day";
+  const scene: WeatherScene = currentWeather.scene;
   const selectedMedia = weatherMedia[scene];
 
   return (
@@ -51,26 +61,26 @@ function WeatherResult({ days }: WeatherResultProps) {
       </video>
       <div className={styles.weatherContent}>
         <div className={styles.weatherNow}>
-          <h1 className={styles.title}>Vitória</h1>
-          <span className={styles.temp}>24°</span>
-          <p className={styles.weatherStats}>Chuva leve</p>
+          <h1 className={styles.title}>{currentWeather.city}</h1>
+          <span className={styles.temp}>{currentWeather.temperature}°</span>
+          <p className={styles.weatherStats}>{currentWeather.description}</p>
         </div>
         <dl className={styles.weatherDetails}>
           <div className={styles.detailItem}>
             <dt>Máx.</dt>
-            <dd>26°</dd>
+            <dd>{currentWeather.max}°</dd>
           </div>
           <div className={styles.detailItem}>
             <dt>Mín.</dt>
-            <dd>21°</dd>
+            <dd>{currentWeather.min}°</dd>
           </div>
           <div className={styles.detailItem}>
             <dt>Umidade</dt>
-            <dd>87%</dd>
+            <dd>{currentWeather.humidity}%</dd>
           </div>
           <div className={styles.detailItem}>
             <dt>Vento</dt>
-            <dd>18 km/h</dd>
+            <dd>{currentWeather.windSpeed} km/h</dd>
           </div>
         </dl>
         <ul className={styles.weatherNextDays}>

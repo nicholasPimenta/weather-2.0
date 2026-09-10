@@ -1,9 +1,8 @@
 import styles from "./App.module.css";
 import SearchForm from "./components/SearchForm/SearchForm";
-import rainIcon from "@meteocons/svg-static/monochrome/rain.svg"
+import rainIcon from "@meteocons/svg-static/monochrome/rain.svg";
 import WeatherResult from "./components/WeatherResult/WeatherResult";
-import { geocodeCity } from "./services/openWeather";
-import { getCurrentWeather } from "./services/openWeather";
+import { geocodeCity, getCurrentWeather, getForecast } from "./services/openWeather";
 
 function App() {
 
@@ -46,10 +45,22 @@ function App() {
     try {
       const { lat, lon } = await geocodeCity(city);
       const currentWeather = await getCurrentWeather(lat, lon);
-      console.log("Clima atual", currentWeather);
+      const forecast = await getForecast(lat, lon);
+      console.log("Panorama meteorológico:", currentWeather, forecast);
     } catch (error) {
       console.error("Erro ao buscar as informações:", error);
     }
+  };
+
+  const mockCurrentWeather = {
+    temperature: 25,
+    max: 26,
+    min: 21,
+    humidity: 80,
+    windSpeed: 18,
+    description: "Chuva",
+    city: "São Paulo",
+    scene: "rain-day" as const,
   };
 
   return (
@@ -67,7 +78,7 @@ function App() {
           <SearchForm onSearch={handleSearch} />
         </div>
       </section>
-      <WeatherResult days={forecastDays} />
+      <WeatherResult days={forecastDays} currentWeather={mockCurrentWeather} />
     </main>
   );
 }

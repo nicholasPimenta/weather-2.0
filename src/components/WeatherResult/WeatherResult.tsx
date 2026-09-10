@@ -17,9 +17,10 @@ export interface CurrentWeather {
 interface WeatherResultProps {
   days: ForecastDay[];
   currentWeather: CurrentWeather;
+  onBack: () => void;
 }
 
-function WeatherResult({ days, currentWeather }: WeatherResultProps) {
+function WeatherResult({ days, currentWeather, onBack }: WeatherResultProps) {
 
   const scene: WeatherScene = currentWeather.scene;
   const selectedMedia = weatherMedia[scene];
@@ -32,7 +33,7 @@ function WeatherResult({ days, currentWeather }: WeatherResultProps) {
         className={styles.backButton}
         aria-label="Voltar para a pesquisa"
       >
-        <ArrowLeftIcon size={32} aria-hidden="true" weight="light" />
+        <ArrowLeftIcon size={32} aria-hidden="true" weight="light" onClick={onBack} />
       </button>
       <img
         src={selectedMedia.fallback}

@@ -3,6 +3,7 @@ import SearchForm from "./components/SearchForm/SearchForm";
 import rainIcon from "@meteocons/svg-static/monochrome/rain.svg";
 import WeatherResult from "./components/WeatherResult/WeatherResult";
 import { geocodeCity, getCurrentWeather, getForecast } from "./services/openWeather";
+import { getWeatherScene } from "./components/WeatherResult/WeatherMedia";
 
 function App() {
 
@@ -46,7 +47,12 @@ function App() {
       const { lat, lon } = await geocodeCity(city);
       const currentWeather = await getCurrentWeather(lat, lon);
       const forecast = await getForecast(lat, lon);
-      console.log("Panorama meteorológico:", currentWeather, forecast);
+      const scene = getWeatherScene(currentWeather.weather[0].id, currentWeather.dt, currentWeather.sys.sunrise, currentWeather.sys.sunset);
+      console.log("Panorama meteorológico:", {
+        currentWeather, 
+        forecast, 
+        scene
+      });
     } catch (error) {
       console.error("Erro ao buscar as informações:", error);
     }

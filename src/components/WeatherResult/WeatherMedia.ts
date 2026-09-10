@@ -38,3 +38,32 @@ export const weatherMedia: Record<WeatherScene, WeatherMedia> = {
   "snow-day": {video: snowDayVideo, fallback: snowDayImg},
   "snow-night": {video: snowNightVideo, fallback: snowNightImg},
 };
+
+export const getWeatherCondition = (weatherId: number): WeatherCondition => {
+  if (weatherId >= 200 && weatherId < 600) {
+    return "rain";
+  }
+  if (weatherId >= 600 && weatherId < 700) {
+    return "snow";
+  }
+  if (weatherId >= 801 && weatherId < 805) {
+    return "cloudy";
+  }
+  if (weatherId === 800) {
+    return "clear";
+  }
+  return "cloudy";
+};
+
+export const getDayPeriod = (currentTime: number, sunrise: number, sunset: number): DayPeriod => {
+  if (currentTime >= sunrise && currentTime < sunset) {
+    return "day";
+  }
+  return "night";
+};
+
+export const getWeatherScene = (weatherId: number, currentTime: number, sunrise: number, sunset: number): WeatherScene => {
+  const condition = getWeatherCondition(weatherId);
+  const period = getDayPeriod(currentTime, sunrise, sunset);
+  return `${condition}-${period}`;
+};

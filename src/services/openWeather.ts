@@ -9,6 +9,11 @@ export interface GeocodingResult {
 }
 
 export interface CurrentWeatherResponse {
+  dt: number;
+  sys: {
+    sunrise: number;
+    sunset: number;
+  };
   weather: {  
     id: number;
     description: string;

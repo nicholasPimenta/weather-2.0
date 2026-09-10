@@ -3,6 +3,7 @@ import SearchForm from "./components/SearchForm/SearchForm";
 import rainIcon from "@meteocons/svg-static/monochrome/rain.svg"
 import WeatherResult from "./components/WeatherResult/WeatherResult";
 import { geocodeCity } from "./services/openWeather";
+import { getCurrentWeather } from "./services/openWeather";
 
 function App() {
 
@@ -43,12 +44,13 @@ function App() {
 
   const handleSearch = async (city: string): Promise<void> => {
     try {
-      const results = await geocodeCity(city);
-      console.log(results);
+      const { lat, lon } = await geocodeCity(city);
+      const currentWeather = await getCurrentWeather(lat, lon);
+      console.log("Clima atual", currentWeather);
     } catch (error) {
-      console.error(error);
-    };
-  }
+      console.error("Erro ao buscar as informações:", error);
+    }
+  };
 
   return (
     <main className={styles.weatherApp}>

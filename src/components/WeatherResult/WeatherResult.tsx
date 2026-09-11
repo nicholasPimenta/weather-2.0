@@ -18,22 +18,26 @@ interface WeatherResultProps {
   days: ForecastDay[];
   currentWeather: CurrentWeather;
   onBack: () => void;
+  isReturning: boolean;
+  onReturnComplete: () => void;
 }
 
-function WeatherResult({ days, currentWeather, onBack }: WeatherResultProps) {
+function WeatherResult({ days, currentWeather, onBack, isReturning, onReturnComplete }: WeatherResultProps) {
 
   const scene: WeatherScene = currentWeather.scene;
   const selectedMedia = weatherMedia[scene];
 
   return (
-    <section className={styles.weatherMain}>
+    <section className={styles.weatherMain} data-phase={isReturning ? "returning" : "result"}>
       <div className={styles.gradient} aria-hidden="true"></div>
       <button
         type="button"
         className={styles.backButton}
         aria-label="Voltar para a pesquisa"
+        onClick={onBack}
+        disabled={isReturning}
       >
-        <ArrowLeftIcon size={32} aria-hidden="true" weight="light" onClick={onBack} />
+        <ArrowLeftIcon size={32} aria-hidden="true" weight="light" />
       </button>
       <img
         src={selectedMedia.fallback}
@@ -51,6 +55,7 @@ function WeatherResult({ days, currentWeather, onBack }: WeatherResultProps) {
         poster={selectedMedia.fallback}
         aria-hidden="true"
         key={scene}
+        onAnimationEnd={isReturning ? onReturnComplete : undefined}
       >
         <source src={selectedMedia.video} type="video/mp4" />
       </video>

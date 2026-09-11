@@ -10,6 +10,25 @@
   overflow: hidden;
 }
 
+.weatherMain[data-phase="returning"] .weatherNextDays,
+.weatherMain[data-phase="returning"] .weatherDetails,
+.weatherMain[data-phase="returning"] .backButton {
+  animation: contentOut 350ms var(--ease-standard) both;
+}
+
+.weatherMain[data-phase="returning"] .weatherNow {
+  animation: contentOut 450ms var(--ease-standard) 250ms both;
+}
+
+.weatherMain[data-phase="returning"] .gradient {
+  animation: gradientOut 500ms var(--ease-standard) 500ms both;
+}
+
+.weatherMain[data-phase="returning"] .weatherFallback,
+.weatherMain[data-phase="returning"] .weatherVideo {
+  animation: atmosphereOut 700ms var(--ease-standard) 500ms both;
+}
+
 .weatherContent {
   display: flex;
   justify-content: end;
@@ -22,16 +41,22 @@
 
 .gradient {
   position: absolute;
-  background: linear-gradient(to right, var(--color-weather-overlay), transparent);
+  background: linear-gradient(
+    to right,
+    var(--color-weather-overlay),
+    transparent
+  );
   pointer-events: none;
   inset: 0;
   z-index: 2;
   opacity: 0.75;
+  animation: gradientIn 900ms var(--ease-standard) both;
 }
 
 .weatherNow {
   display: flex;
   flex-direction: column;
+  animation: contentIn 700ms var(--ease-standard) 350ms both;
 }
 
 .backButton {
@@ -42,15 +67,9 @@
   border-radius: var(--radius-pill);
   display: flex;
   align-self: start;
+  position: relative;
   z-index: 3;
-}
-
-.backButton:hover {
-  color: var(--color-text-secondary);
-}
-
-.backButton:active {
-  color: var(--color-text-primary);
+  animation: contentIn 500ms var(--ease-standard) 700ms both;
 }
 
 .backButton:focus {
@@ -62,9 +81,12 @@
   border: 2px solid var(--color-border);
 }
 
-.backButton, .weatherContent {
-  position: relative;
-  z-index: 2;
+.backButton:not(:disabled):hover {
+  color: var(--color-text-secondary);
+}
+
+.backButton:not(:disabled):active {
+  color: var(--color-text-primary);
 }
 
 .iconWeather {
@@ -80,6 +102,7 @@
   column-gap: var(--space-4);
   margin-top: var(--space-4);
   margin-bottom: var(--space-12);
+  animation: contentIn 600ms var(--ease-standard) 600ms both;
 }
 
 .weatherNextDays {
@@ -87,6 +110,7 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
+  animation: contentIn 600ms var(--ease-standard) 800ms both;
 }
 
 .nextDayContent {
@@ -179,6 +203,7 @@
   object-fit: cover;
   display: block;
   pointer-events: none;
+  animation: atmosphereIn 900ms var(--ease-standard) both;
 }
 
 .weatherFallback {
@@ -187,6 +212,70 @@
 
 .weatherVideo {
   z-index: 1;
+}
+
+@keyframes atmosphereIn {
+  from {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes gradientIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0.75;
+  }
+}
+
+@keyframes contentIn {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradientInMobile {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0.5;
+  }
+}
+
+@keyframes contentOut {
+  to {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+
+@keyframes gradientOut {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes atmosphereOut {
+  to {
+    opacity: 0;
+    transform: scale(1.025);
+  }
 }
 
 @media (max-width: 30rem) {
@@ -199,16 +288,41 @@
     align-items: center;
   }
 
-  .title, .temp, .weatherStats {
+  .title,
+  .temp,
+  .weatherStats {
     text-align: center;
   }
 
   .gradient {
-  background: radial-gradient(
-    circle at center,
-    var(--color-weather-overlay),
-    transparent
-  );
-  opacity: 0.5;
+    background: radial-gradient(
+      circle at center,
+      var(--color-weather-overlay),
+      transparent
+    );
+    opacity: 0.5;
+    animation-name: gradientInMobile;
+  }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .weatherFallback,
+  .weatherVideo,
+  .gradient,
+  .weatherNow,
+  .weatherDetails,
+  .weatherNextDays,
+  .backButton {
+    animation: none;
+  }
+
+  .weatherMain[data-phase="returning"] .weatherFallback,
+  .weatherMain[data-phase="returning"] .weatherVideo,
+  .weatherMain[data-phase="returning"] .gradient,
+  .weatherMain[data-phase="returning"] .weatherNow,
+  .weatherMain[data-phase="returning"] .weatherDetails,
+  .weatherMain[data-phase="returning"] .weatherNextDays,
+  .weatherMain[data-phase="returning"] .backButton {
+    animation: none;
+  }
 }

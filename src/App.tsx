@@ -12,6 +12,8 @@ import {
   getForecast,
 } from "./services/openWeather";
 
+type ViewPhase = "search" | "loading" | "result" | "returning" | "restoring";
+
 function App() {
   const [currentWeather, setCurrentWeather] = useState<CurrentWeather | null>(
     null,
@@ -19,6 +21,7 @@ function App() {
   const [forecastDays, setForecastDays] = useState<ForecastDay[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [viewPhase, setViewPhase] = useState<ViewPhase>("search");
 
   const handleEmptySearch = () => {
     setSearchError("Por favor, insira o nome de uma cidade.");
@@ -26,6 +29,7 @@ function App() {
 
   const handleSearch = async (city: string): Promise<void> => {
     setIsLoading(true);
+    setViewPhase("loading");
     setSearchError(null);
     try {
       const location = await geocodeCity(city);
@@ -59,13 +63,9 @@ function App() {
       );
       setCurrentWeather(preparedCurrentWeather);
       setForecastDays(preparedForecastDays);
-      console.log("Panorama meteorológico:", {
-        currentWeather: preparedCurrentWeather,
-        forecast,
-        scene,
-        forecastDays: preparedForecastDays,
-      });
+      setViewPhase("result");
     } catch (error) {
+      setViewPhase("search");
       if (error instanceof TypeError) {
         setSearchError(
           "Não foi possível conectar. Verifique sua internet e tente novamente.",
@@ -82,16 +82,47 @@ function App() {
     }
   };
 
-  const handleBack = () => {
+  const finishReturn = () => {
     setCurrentWeather(null);
     setForecastDays([]);
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    setViewPhase(prefersReducedMotion ? "search" : "restoring");
+  };
+
+  const handleBack = () => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      finishReturn();
+      return;
+    }
+
+    setViewPhase("returning");
   };
 
   return (
     <main className={styles.weatherApp}>
-      {currentWeather === null && (
-        <section className={styles.searchView} aria-labelledby="app-title">
-          <div className={styles.searchViewContent}>
+      {(viewPhase === "search" ||
+        viewPhase === "loading" ||
+        viewPhase === "restoring") && (
+        <section
+          className={styles.searchView}
+          aria-labelledby="app-title"
+          data-phase={viewPhase}
+        >
+          <div
+            className={styles.searchViewContent}
+            onAnimationEnd={(event) => {
+              if (
+                event.target === event.currentTarget &&
+                viewPhase === "restoring"
+              ) {
+                setViewPhase("search");
+              }
+            }}
+          >
             <div className={styles.searchViewTexts}>
               <h1 id="app-title" className={styles.title}>
                 Weather 2.0
@@ -113,13 +144,16 @@ function App() {
           </div>
         </section>
       )}
-      {currentWeather && (
-        <WeatherResult
-          days={forecastDays}
-          currentWeather={currentWeather}
-          onBack={handleBack}
-        />
-      )}
+      {currentWeather &&
+        (viewPhase === "result" || viewPhase === "returning") && (
+          <WeatherResult
+            days={forecastDays}
+            currentWeather={currentWeather}
+            onBack={handleBack}
+            isReturning={viewPhase === "returning"}
+            onReturnComplete={finishReturn}
+          />
+        )}
     </main>
   );
 }

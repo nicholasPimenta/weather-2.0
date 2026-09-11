@@ -6,11 +6,7 @@ import { useState } from "react";
 import WeatherResult, {
   type CurrentWeather,
 } from "./components/WeatherResult/WeatherResult";
-import {
-  geocodeCity,
-  getCurrentWeather,
-  getForecast,
-} from "./services/openWeather";
+import { getWeatherByCity } from "./services/openWeather";
 
 type ViewPhase = "search" | "loading" | "result" | "returning" | "restoring";
 
@@ -32,12 +28,11 @@ function App() {
     setViewPhase("loading");
     setSearchError(null);
     try {
-      const location = await geocodeCity(city);
-      const currentWeatherResponse = await getCurrentWeather(
-        location.lat,
-        location.lon,
-      );
-      const forecast = await getForecast(location.lat, location.lon);
+      const {
+        location,
+        currentWeather: currentWeatherResponse,
+        forecast,
+      } = await getWeatherByCity(city);
       const scene = getWeatherScene(
         currentWeatherResponse.weather[0].id,
         currentWeatherResponse.dt,

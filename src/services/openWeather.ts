@@ -1,5 +1,3 @@
-import { openWeatherApiKey } from "../config/env";
-
 export interface GeocodingResult {
   name: string;
   state?: string;
@@ -50,75 +48,39 @@ export interface ForecastResponse {
   };
 }
 
-const GEOCODING_ENDPOINT = "https://api.openweathermap.org/geo/1.0/direct";
-const CURRENT_WEATHER_ENDPOINT = "https://api.openweathermap.org/data/2.5/weather";
-const FORECAST_ENDPOINT = "https://api.openweathermap.org/data/2.5/forecast";
-
-export async function geocodeCity(city: string): Promise<GeocodingResult> {
-  const params = new URLSearchParams({
-    q: city.trim(),
-    limit: "1",
-    appid: openWeatherApiKey,
-  });
-
-  const response = await fetch(
-    `${GEOCODING_ENDPOINT}?${params}`,
-  );
-
-  if (!response.ok) {
-    throw new Error("O serviço de clima está indisponível no momento. Tente novamente em instantes.");
-  }
-  
-  const data: GeocodingResult[] = await response.json();
-  const [location] = data;
-
-  if (!location) {
-    throw new Error("Cidade não encontrada. Confira o nome e tente novamente.");
-  }
-
-  return location;
+interface ApiErrorResponse {
+  message?: string;
 }
 
-export async function getCurrentWeather(lat: number, lon: number): Promise<CurrentWeatherResponse> {
-  const params = new URLSearchParams({
-    lat: lat.toString(),
-    lon: lon.toString(),
-    units: "metric",
-    appid: openWeatherApiKey,
-    lang: "pt_br",
-  });
-
-  const response = await fetch(
-    `${CURRENT_WEATHER_ENDPOINT}?${params}`,
-  );
-
-  if (!response.ok) {
-    throw new Error("O serviço de clima está indisponível no momento. Tente novamente em instantes.");
-  }
-
-  const data: CurrentWeatherResponse = await response.json();
-
-  return data;
+export interface WeatherApiResponse {
+  location: GeocodingResult;
+  currentWeather: CurrentWeatherResponse;
+  forecast: ForecastResponse;
 }
 
-export async function getForecast(lat: number, lon: number): Promise<ForecastResponse> {
+const WEATHER_ENDPOINT = "/api/weather";
+
+export async function getWeatherByCity(
+  city: string,
+): Promise<WeatherApiResponse> {
   const params = new URLSearchParams({
-    lat: lat.toString(),
-    lon: lon.toString(),
-    units: "metric",
-    appid: openWeatherApiKey,
-    lang: "pt_br",
+    city: city.trim(),
   });
 
-  const response = await fetch(
-    `${FORECAST_ENDPOINT}?${params}`,
-  );
+  const response = await fetch(`${WEATHER_ENDPOINT}?${params}`);
+
+  const data = (await response.json()) as
+    | WeatherApiResponse
+    | ApiErrorResponse;
 
   if (!response.ok) {
-    throw new Error("O serviço de clima está indisponível no momento. Tente novamente em instantes.");
+    const message =
+      "message" in data && data.message
+        ? data.message
+        : "Não foi possível consultar o clima.";
+
+    throw new Error(message);
   }
 
-  const data: ForecastResponse = await response.json();
-
-  return data;
+  return data as WeatherApiResponse;
 }

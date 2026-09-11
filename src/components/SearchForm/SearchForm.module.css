@@ -52,13 +52,30 @@
   transition: color var(--duration-medium) var(--ease-standard);
 }
 
-.formButton:hover {
-  color: var(--color-text-secondary);
+.formButton:not(:disabled):hover {
+  color: var(--color-secondary);
 }
 
-.formButton:active {
-  color: var(--color-text-primary);
+.formButton:not(:disabled):active {
+  color: var(--color-primary);
   transition-duration: var(--duration-fast);
+}
+
+.loadingIcon {
+  animation: spin 0.8s linear infinite;
+  color: var(--color-text-muted);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loadingIcon {
+    animation: none;
+  }
 }
 
 @media (max-width: 30rem) {

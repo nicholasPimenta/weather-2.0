@@ -66,14 +66,14 @@ export async function geocodeCity(city: string): Promise<GeocodingResult> {
   );
 
   if (!response.ok) {
-    throw new Error(`Erro na requisição: ${response.status}`);
+    throw new Error("O serviço de clima está indisponível no momento. Tente novamente em instantes.");
   }
   
   const data: GeocodingResult[] = await response.json();
   const [location] = data;
 
   if (!location) {
-    throw new Error(`Cidade não encontrada: ${city}`);
+    throw new Error("Cidade não encontrada. Confira o nome e tente novamente.");
   }
 
   return location;
@@ -93,7 +93,7 @@ export async function getCurrentWeather(lat: number, lon: number): Promise<Curre
   );
 
   if (!response.ok) {
-    throw new Error(`Erro na requisição: ${response.status}`);
+    throw new Error("O serviço de clima está indisponível no momento. Tente novamente em instantes.");
   }
 
   const data: CurrentWeatherResponse = await response.json();
@@ -115,7 +115,7 @@ export async function getForecast(lat: number, lon: number): Promise<ForecastRes
   );
 
   if (!response.ok) {
-    throw new Error(`Erro na requisição: ${response.status}`);
+    throw new Error("O serviço de clima está indisponível no momento. Tente novamente em instantes.");
   }
 
   const data: ForecastResponse = await response.json();

@@ -17,8 +17,16 @@ function App() {
     null,
   );
   const [forecastDays, setForecastDays] = useState<ForecastDay[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+
+  const handleEmptySearch = () => {
+    setSearchError("Por favor, insira o nome de uma cidade.");
+  };
 
   const handleSearch = async (city: string): Promise<void> => {
+    setIsLoading(true);
+    setSearchError(null);
     try {
       const location = await geocodeCity(city);
       const currentWeatherResponse = await getCurrentWeather(
@@ -58,7 +66,19 @@ function App() {
         forecastDays: preparedForecastDays,
       });
     } catch (error) {
+      if (error instanceof TypeError) {
+        setSearchError(
+          "Não foi possível conectar. Verifique sua internet e tente novamente.",
+        );
+      } else if (error instanceof Error) {
+        setSearchError(error.message);
+      } else {
+        setSearchError("Ocorreu um erro desconhecido.");
+      }
+
       console.error("Erro ao buscar as informações:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,7 +100,16 @@ function App() {
                 Pesquise uma cidade e entre na atmosfera.
               </p>
             </div>
-            <SearchForm onSearch={handleSearch} />
+            <SearchForm
+              onSearch={handleSearch}
+              isLoading={isLoading}
+              onEmptySearch={handleEmptySearch}
+            />
+            {searchError && (
+              <p className={styles.errorMessage} role="alert">
+                {searchError}
+              </p>
+            )}
           </div>
         </section>
       )}
